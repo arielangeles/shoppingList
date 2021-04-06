@@ -8,13 +8,13 @@ namespace ShoppingListAPI.Models
     public class Item
     {
         static int id = 0;
-  
-        public Item()
+
+		public Item()
         {
             id++;
         }
 
-        public Item(string name, int quantity, string status)
+		public Item(string name, int quantity, string status)
         {
             id++;
 

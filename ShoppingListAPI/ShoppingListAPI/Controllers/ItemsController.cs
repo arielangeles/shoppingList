@@ -24,7 +24,7 @@ namespace ShoppingListAPI.Controllers
             "Leche", "Pan"
         };
 
-        private static List<Item> Items = new List<Item>()
+        public static List<Item> Items = new List<Item>()
         { 
             new Item("Leche", 5, "Completado"),
             new Item("Pan", 10, "Pendiente Compra"),
