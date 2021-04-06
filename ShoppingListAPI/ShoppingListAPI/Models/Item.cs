@@ -8,7 +8,7 @@ namespace ShoppingListAPI.Models
     public class Item
     {
         static int id = 0;
-        
+  
         public Item()
         {
             id++;
