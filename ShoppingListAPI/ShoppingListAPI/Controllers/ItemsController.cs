@@ -19,6 +19,12 @@ namespace ShoppingListAPI.Controllers
     [ApiController]
     public class ItemsController : ControllerBase
     {
+        public static readonly string[] Status = {
+            "Pendiente Compra",
+            "Comprado",
+            "Descartado"
+        };
+
         public static List<string> Names = new List<string>()
         {
             "Leche", "Pan"
@@ -71,7 +77,7 @@ namespace ShoppingListAPI.Controllers
 
             Items.Add(new Item(item.Name, item.Quantity, item.Status));
 
-            return Ok();
+            return NoContent();
         }
 
         public class PutStatus
@@ -91,10 +97,21 @@ namespace ShoppingListAPI.Controllers
             //    return StatusCode((int)HttpStatusCode.NotModified);
             //}
 
-            Item item = Items.Where(item => item.Name == name).FirstOrDefault();
-            item.Status = status.Status;
+            
+            if (!Status.Contains(status.Status))
+            {
+                string errorMessage = $"Invalid status: Options are ({string.Join(", ", Status)})";
+                return BadRequest(errorMessage);
+            }
 
-            return Ok();
+            Item item = Items.Where(item => item.Name == name).FirstOrDefault();
+            if (item != null)
+            {
+                item.Status = status.Status;
+                return NoContent();
+            }
+               
+            return NotFound($"Item with name: `{name}` was not found");     
  
         }
    
