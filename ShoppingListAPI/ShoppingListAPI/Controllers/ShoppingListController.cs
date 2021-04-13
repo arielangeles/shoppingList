@@ -55,7 +55,7 @@ namespace ShoppingListAPI.Controllers
 
 		[BasicAuthentication]
 		[HttpPost("Logout")]
-		public ActionResult Logout([FromBody] User logoutUser)
+		public ActionResult Logout()
 		{
 			string currentUserName = User.FindFirst(ClaimTypes.Name).Value;
 			User user = UserRepository.LoginUsers.FirstOrDefault(item => item.Username == currentUserName);
