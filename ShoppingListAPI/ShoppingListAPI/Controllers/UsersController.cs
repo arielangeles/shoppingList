@@ -20,11 +20,14 @@ namespace ShoppingListAPI.Controllers
 		{
 			User authorizedUser = UserRepository.LoginUsers.FirstOrDefault(item => item.Username == user.Username);
 			if (authorizedUser != null)
-				return NotFound("User already logged");
+				return Ok("User already logged in");
+
+			string hashedPassword = SecurePasswordHasher.Hash(user.Password);
+			bool isPassword = SecurePasswordHasher.Verify(user.Password, hashedPassword);
 
 			authorizedUser = UserRepository.RegisterUsers.FirstOrDefault(item => item.Username == user.Username);
-			if (authorizedUser == null)
-				return NotFound("Invalid Username or Password");
+			if (authorizedUser == null || !isPassword)
+				return Unauthorized("Invalid Username or Password");
 
 			UserRepository.LoginUsers.Add(authorizedUser);
 
@@ -36,9 +39,11 @@ namespace ShoppingListAPI.Controllers
 		{
 			bool userExist = UserRepository.RegisterUsers.FirstOrDefault(item => item.Username == user.Username) != null;
 			if (userExist)
-				return NotFound("User already exist");
+				return	BadRequest("User already exist");
 
-			User newUser = new User(user.Username, user.Password);
+			string hashedPassword = SecurePasswordHasher.Hash(user.Password);
+
+			User newUser = new User(user.Username, hashedPassword);
 			UserRepository.RegisterUsers.Add(newUser);
 
 			return Ok();
@@ -51,9 +56,10 @@ namespace ShoppingListAPI.Controllers
 			string currentUserName = User.FindFirst(ClaimTypes.Name).Value;
 			User user = UserRepository.LoginUsers.FirstOrDefault(item => item.Username == currentUserName);
 			if (user == null)
-				return NotFound("error");
+				return Unauthorized("Invalid user");
 
 			UserRepository.LoginUsers.Remove(user);
+
 			return Ok();
 		}
 

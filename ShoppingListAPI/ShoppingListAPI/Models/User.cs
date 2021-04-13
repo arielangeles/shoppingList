@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace ShoppingListAPI.Models
@@ -28,5 +30,6 @@ namespace ShoppingListAPI.Models
 			Password = password;
 			ShoppingList = new List<ShoppingList>();
 		}
+
 	}
 }

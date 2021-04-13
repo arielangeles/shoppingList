@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ShoppingListAPI.Models;
 using ShoppingListAPI.Repository;
 using System;
 using System.Collections.Generic;
@@ -47,11 +48,16 @@ namespace ShoppingListAPI
             var authUsername = authSplit[0];
             var authPassword = authSplit.Length > 1 ? authSplit[1] : throw new Exception("Unable to get password");
 
-            if (UserRepository.LoginUsers.Find(user => user.Username == authUsername && user.Password == authPassword) == null)
+            string hashedPassword = SecurePasswordHasher.Hash(authPassword);
+            bool isPassword = SecurePasswordHasher.Verify(authPassword, hashedPassword);
+
+
+            if (UserRepository.LoginUsers.Find(user => user.Username == authUsername && isPassword) == null)
             {
                 return Task.FromResult(AuthenticateResult.Fail("The username or password is not correct."));
             }
-
+           
+  
             var claims = new[] {
                 new Claim(ClaimTypes.Name, authUsername),
             };
