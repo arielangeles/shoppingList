@@ -57,13 +57,7 @@ namespace ShoppingListAPI.Controllers
 		{
 		}
 
-		// DELETE api/<ShoppingListController>/5
-		[BasicAuthentication]
-		[HttpDelete("{id}")]
-		public void Delete(int id)
-		{
-		}
-
+		// GET api/<ShoppingListController>/1
 		[BasicAuthentication]
 		[HttpGet("{shoppingdId}")]
 		public ActionResult<ShoppingList> ShoppingListbyIdGet(int shoppingdId)
@@ -155,7 +149,7 @@ namespace ShoppingListAPI.Controllers
 		// PUT api/<ShoppingListController>/1/Items/pan
 		[BasicAuthentication]
 		[HttpPut("{shoppingdId}/Items/{name}")]
-        public ActionResult ItemPut(int shoppingdId, string name, [FromBody] PutStatus status)
+        public ActionResult ItemPut(int shoppingdId, string name, [FromBody] Item item)
         {
 			List<ShoppingList> ShoppingLists = GetUserShoppingLists();
 
@@ -171,12 +165,29 @@ namespace ShoppingListAPI.Controllers
             //    return StatusCode((int)HttpStatusCode.NotModified);
             //}
 
-            Item item = items.Where(item => item.Name == name).FirstOrDefault();
-            item.Status = status.Status;
+            Item tempitem = items.Where(item => item.Name == name).FirstOrDefault();
+			tempitem.Status = item.Status;
 
             return Ok();
 
         }
+
+		// DELETE api/<ShoppingListController>/1
+		[BasicAuthentication]
+		[HttpDelete("{shoppingdId}")]
+		public ActionResult ItemDelete(int shoppingdId)
+		{
+			List<ShoppingList> ShoppingLists = GetUserShoppingLists();
+
+			ShoppingList list = ShoppingLists.Find(e => e.Id == shoppingdId);
+
+			if (list == null) return NotFound("ShoppingList not found");
+
+			ShoppingLists.Remove(list);
+
+			return Ok();
+
+		}
 
 		// DELETE api/<ShoppingListController>/1/Items/pan
 		[BasicAuthentication]
