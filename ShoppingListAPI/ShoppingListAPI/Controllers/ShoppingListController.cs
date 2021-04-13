@@ -53,6 +53,7 @@ namespace ShoppingListAPI.Controllers
 			return Ok();
 		}
 
+		[BasicAuthentication]
 		[HttpPost("Logout")]
 		public ActionResult Logout([FromBody] User logoutUser)
 		{
