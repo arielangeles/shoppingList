@@ -35,22 +35,22 @@ namespace ShoppingListAPI.Controllers
 		[HttpPost("register/")]
 		public ActionResult Register([FromBody] User user)
 		{
-			if (Emails.Contains(user.Email))
+			if (Emails.Contains(user.Username))
 				return StatusCode((int)HttpStatusCode.Conflict, value: "User with this Email already exists.");
 			else
-				Emails.Add(user.Email);
+				Emails.Add(user.Username);
 
-			Users.Add(new User(user.Email, user.Pass));
+			Users.Add(new User(user.Username, user.Password));
 			return Ok();
 		}
 
 		[HttpPost("login/")]
 		public ActionResult Login([FromBody] User user)
 		{
-			User us = Users.Where(thisuser => thisuser.Email == user.Email && thisuser.Pass == user.Pass).FirstOrDefault();
+			User us = Users.Where(thisuser => thisuser.Username == user.Username && thisuser.Password == user.Password).FirstOrDefault();
 			if (us != null)
 			{
-				if (Emails.Contains(user.Email))
+				if (Emails.Contains(user.Username))
 					return Ok("Succesful");
 				else
 				{

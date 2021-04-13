@@ -15,18 +15,18 @@ namespace ShoppingListAPI.Models
 		}
 
 		public int Id { get; set; }
-		public string Email { get; set; }
-		public string Pass { get; set; }
-		public List<ShoppingList> List { get; set; }
+		public string Username { get; set; }
+		public string Password { get; set; }
+		public List<ShoppingList> ShoppingList { get; set; }
 
-		public User(string email, string pass)
+		public User(string username, string password)
 		{
 			id++;
 
 			Id = id;
-			Email = email;
-			Pass = pass;
-			List = new List<ShoppingList>();
+			Username = username;
+			Password = password;
+			ShoppingList = new List<ShoppingList>();
 		}
 	}
 }
