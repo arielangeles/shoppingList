@@ -21,7 +21,7 @@ namespace ShoppingListAPI.Controllers
 		private List<ShoppingList> GetUserShoppingLists()
         {
 			string currentUserName = User.FindFirst(ClaimTypes.Name).Value;
-			return UserRepository.LoginUsers.FirstOrDefault(item => item.Username == currentUserName)?.ShoppingList;
+			return UserRepository.RegisterUsers.FirstOrDefault(item => item.Username == currentUserName)?.ShoppingList;
 		}
 
 		[HttpPost("Login")]
