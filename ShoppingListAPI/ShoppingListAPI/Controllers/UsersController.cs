@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ShoppingListAPI.DTO;
 using ShoppingListAPI.Models;
-using System;
+using ShoppingListAPI.Repository;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,63 +14,59 @@ namespace ShoppingListAPI.Controllers
 	[ApiController]
 	public class UsersController : ControllerBase
 	{
-		public static List<string> Emails = new List<string>() {
-			"example@gmail.com",
-			"Secondexample@gmail.com"
-		};
 
-		public static List<User> Users = new List<User>() { 
-			new User("example@gmail.com", "1234"),
-			new User("Secondexample@gmail.com", "1234")
-		};
-
-		// GET: api/<ShoppingListController>
-		[HttpGet]
-		public ActionResult<IEnumerable<User>> Get()
+		[HttpPost("Login")]
+		public ActionResult Login([FromBody] UserAuthenticate user)
 		{
-			return Users;
-		}
+			User authorizedUser = UserRepository.LoginUsers.FirstOrDefault(item => item.Username == user.Username);
+			if (authorizedUser != null)
+				return NotFound("User already logged");
 
-		// POST api/<UsersController>
-		[HttpPost("register/")]
-		public ActionResult Register([FromBody] User user)
-		{
-			if (Emails.Contains(user.Username))
-				return StatusCode((int)HttpStatusCode.Conflict, value: "User with this Email already exists.");
-			else
-				Emails.Add(user.Username);
+			authorizedUser = UserRepository.RegisterUsers.FirstOrDefault(item => item.Username == user.Username);
+			if (authorizedUser == null)
+				return NotFound("Invalid Username or Password");
 
-			Users.Add(new User(user.Username, user.Password));
+			UserRepository.LoginUsers.Add(authorizedUser);
+
 			return Ok();
 		}
 
-		[HttpPost("login/")]
-		public ActionResult Login([FromBody] User user)
+		[HttpPost("Register")]
+		public ActionResult Register([FromBody] UserAuthenticate user)
 		{
-			User us = Users.Where(thisuser => thisuser.Username == user.Username && thisuser.Password == user.Password).FirstOrDefault();
-			if (us != null)
-			{
-				if (Emails.Contains(user.Username))
-					return Ok("Succesful");
-				else
-				{
-					return StatusCode((int)HttpStatusCode.Conflict, value: "Invalid Email");
-				}
-			}
+			bool userExist = UserRepository.RegisterUsers.FirstOrDefault(item => item.Username == user.Username) != null;
+			if (userExist)
+				return NotFound("User already exist");
 
-			return NotFound();
+			User newUser = new User(user.Username, user.Password);
+			UserRepository.RegisterUsers.Add(newUser);
+
+			return Ok();
 		}
 
-		// PUT api/<UsersController>/5
-		[HttpPut("{id}")]
-		public void Put(int id, [FromBody] string value)
+		[BasicAuthentication]
+		[HttpPost("Logout")]
+		public ActionResult Logout()
 		{
+			string currentUserName = User.FindFirst(ClaimTypes.Name).Value;
+			User user = UserRepository.LoginUsers.FirstOrDefault(item => item.Username == currentUserName);
+			if (user == null)
+				return NotFound("error");
+
+			UserRepository.LoginUsers.Remove(user);
+			return Ok();
 		}
 
-		// DELETE api/<UsersController>/5
-		[HttpDelete("{id}")]
-		public void Delete(int id)
+		[HttpGet("Login")]
+		public ActionResult login()
 		{
+			return Ok(UserRepository.LoginUsers);
+		}
+
+		[HttpGet("Register")]
+		public ActionResult Register()
+		{
+			return Ok(UserRepository.RegisterUsers);
 		}
 	}
 }

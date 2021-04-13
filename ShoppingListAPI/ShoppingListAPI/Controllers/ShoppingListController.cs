@@ -18,66 +18,11 @@ namespace ShoppingListAPI.Controllers
 	[ApiController]
 	public class ShoppingListController : ControllerBase
 	{
-		private List<ShoppingList> GetUserShoppingLists()
-        {
+		public List<ShoppingList> GetUserShoppingLists()
+		{
 			string currentUserName = User.FindFirst(ClaimTypes.Name).Value;
 			return UserRepository.RegisterUsers.FirstOrDefault(item => item.Username == currentUserName)?.ShoppingList;
 		}
-
-		[HttpPost("Login")]
-		public ActionResult Login ([FromBody] UserAuthenticate user)
-        {
-			User authorizedUser = UserRepository.LoginUsers.FirstOrDefault(item => item.Username == user.Username);
-			if (authorizedUser != null)
-				 return NotFound("User already logged");
-
-			authorizedUser = UserRepository.RegisterUsers.FirstOrDefault(item => item.Username == user.Username);
-			if (authorizedUser == null)
-				return NotFound("Invalid Username or Password");
-
-			UserRepository.LoginUsers.Add(authorizedUser);
-
-			return Ok();
-		}
-
-		[HttpPost("Register")]
-		public ActionResult Register([FromBody] UserAuthenticate user)
-		{
-			bool userExist = UserRepository.RegisterUsers.FirstOrDefault(item => item.Username == user.Username) != null;
-			if (userExist)
-				return NotFound("User already exist");
-
-			User newUser = new User(user.Username, user.Password);
-			UserRepository.RegisterUsers.Add(newUser);
-
-			return Ok();
-		}
-
-		[BasicAuthentication]
-		[HttpPost("Logout")]
-		public ActionResult Logout()
-		{
-			string currentUserName = User.FindFirst(ClaimTypes.Name).Value;
-			User user = UserRepository.LoginUsers.FirstOrDefault(item => item.Username == currentUserName);
-			if (user == null)
-				return NotFound("error");
-		
-			UserRepository.LoginUsers.Remove(user);
-			return Ok();
-		}
-
-		[HttpGet("Login")]
-		public ActionResult login()
-		{
-			return Ok(UserRepository.LoginUsers);
-		}
-
-		[HttpGet("Register")]
-		public ActionResult Register()
-		{
-			return Ok(UserRepository.RegisterUsers);
-		}
-
 
 		// GET: api/<ShoppingListController>
 		[BasicAuthentication]
@@ -85,14 +30,6 @@ namespace ShoppingListAPI.Controllers
 		public ActionResult<IEnumerable<ShoppingList>> Get()
 		{
 			return GetUserShoppingLists();
-		}
-
-		// GET api/<ShoppingListController>/5
-		[BasicAuthentication]
-		[HttpGet("{id}")]
-		public string Get(int id)
-		{
-			return "value";
 		}
 
 		//POST api/<ShoppingListController>
@@ -125,6 +62,19 @@ namespace ShoppingListAPI.Controllers
 		[HttpDelete("{id}")]
 		public void Delete(int id)
 		{
+		}
+
+		[BasicAuthentication]
+		[HttpGet("{shoppingdId}")]
+		public ActionResult<ShoppingList> ShoppingListbyIdGet(int shoppingdId)
+		{
+			List<ShoppingList> ShoppingLists = GetUserShoppingLists();
+
+			ShoppingList list = ShoppingLists.Find(e => e.Id == shoppingdId);
+
+			if (list == null) return NotFound("ShoppingList not found");
+
+			return list;
 		}
 
 		// GET api/<ShoppingListController>/1/Items
