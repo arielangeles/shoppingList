@@ -48,9 +48,7 @@ namespace ShoppingListAPI
             var authUsername = authSplit[0];
             var authPassword = authSplit.Length > 1 ? authSplit[1] : throw new Exception("Unable to get password");
 
-            string hashedPassword = SecurePasswordHasher.Hash(authPassword);
-            bool isPassword = SecurePasswordHasher.Verify(authPassword, hashedPassword);
-
+            bool isPassword = SecurePasswordHasher.Verify(authPassword, authUsername);
 
             if (UserRepository.LoginUsers.Find(user => user.Username == authUsername && isPassword) == null)
             {

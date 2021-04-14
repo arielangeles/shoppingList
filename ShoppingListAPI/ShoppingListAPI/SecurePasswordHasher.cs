@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShoppingListAPI.Repository;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -72,8 +73,10 @@ namespace ShoppingListAPI
         /// <param name="password">The password.</param>
         /// <param name="hashedPassword">The hash.</param>
         /// <returns>Could be verified?</returns>
-        public static bool Verify(string password, string hashedPassword)
+        public static bool Verify(string password, string username)
         {
+            string hashedPassword = UserRepository.RegisterUsers.Find(user => user.Username == username).Password;
+
             // Check hash
             if (!IsHashSupported(hashedPassword))
             {

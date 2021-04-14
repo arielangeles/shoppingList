@@ -140,8 +140,6 @@ namespace ShoppingListAPI.Controllers
 			if (items.Exists(e => e.Name == item.Name))
 				return StatusCode((int)HttpStatusCode.Conflict, value: "Item with this name already exists.");
 
-
-
 			list.Items.Add(new Item(item.Name, item.Quantity, item.Status));
 
 			return Ok();

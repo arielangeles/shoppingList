@@ -22,8 +22,8 @@ namespace ShoppingListAPI.Controllers
 			if (authorizedUser != null)
 				return Ok("User already logged in");
 
-			string hashedPassword = SecurePasswordHasher.Hash(user.Password);
-			bool isPassword = SecurePasswordHasher.Verify(user.Password, hashedPassword);
+
+			bool isPassword = SecurePasswordHasher.Verify(user.Password, user.Username);
 
 			authorizedUser = UserRepository.RegisterUsers.FirstOrDefault(item => item.Username == user.Username);
 			if (authorizedUser == null || !isPassword)
@@ -63,16 +63,16 @@ namespace ShoppingListAPI.Controllers
 			return Ok();
 		}
 
-		[HttpGet("Login")]
-		public ActionResult login()
-		{
-			return Ok(UserRepository.LoginUsers);
-		}
+		//[HttpGet("Login")]
+		//public ActionResult login()
+		//{
+		//	return Ok(UserRepository.LoginUsers);
+		//}
 
-		[HttpGet("Register")]
-		public ActionResult Register()
-		{
-			return Ok(UserRepository.RegisterUsers);
-		}
+		//[HttpGet("Register")]
+		//public ActionResult Register()
+		//{
+		//	return Ok(UserRepository.RegisterUsers);
+		//}
 	}
 }
